@@ -3,7 +3,7 @@
     
 # Steps
 
-## 1. Image Tokenization via VQVAE
+## 1. Image Tokenization (VQVAE)
 
 1.1 Input Image  
 
@@ -49,7 +49,7 @@
 
 4.3 Output: A full input sequence (shape: [B, L_total, C]).  
 
-## 5. Processing Through Transformer Backbone
+## 5. Processing Through Transformer
 
 5.1 For each of N stacked `AdaLNSelfAttn` blocks:  
 
@@ -74,7 +74,7 @@
 
 6.2 Linear Projection: Map tokens to logits over the VQVAE codebook (vocab size).  
 
-6.3 Loss Computation (Training Mode):  
+6.3 Loss Computation:  
   - Compute cross‑entropy loss (with label smoothing) between predicted logits and ground-truth token indices.  
 
 ## 7. Autoregressive Generation (Inference)
@@ -114,12 +114,12 @@
 
 9.3 De‑normalize output to [0, 1].  
 
-## 10. Training vs. Inference Summary
+## 10. Training vs. Inference
 
-• Training Mode:  
+• Training:  
   - Teacher forcing is used to supply ground‑truth tokens, and cross‑entropy loss guides the transformer.  
 
-• Inference Mode:  
+• Inference:  
   - The transformer generates tokens autoregressively using classifier‑free guidance and sampling, then feeds the tokens progressively into higher scales.
 
 
