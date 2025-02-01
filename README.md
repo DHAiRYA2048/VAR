@@ -3,22 +3,22 @@
     
 # Steps
 
-## 1. Image Tokenization (VQVAE)
+## 1. Image tokenization (VQVAE)
 
 1.1 Input Image  
 
-1.2 Encoder: Extract latent features from the image  
+1.2 Encoder: Extract laten features from the image  
 
 1.3 Quantization:  
   - Apply a convolution (`quant_conv`) to the latent feature map.  
   - Use `VectorQuantizer2` to:  
     • Downsample the feature map at multiple scales (as defined by `v_patch_nums`).  
-    • For each scale, compute nearest codebook vector (with optional L2‑normalization).  
+    • For each scale, compute nearest codebook vector.  
     • Aggregate quantized outputs with residual refinement (via one of: non‑shared, fully shared, or partially shared `φ` layers).  
 
 1.4 Output: Multi‑scale discrete tokens (and reconstruction loss computed via MSE)  
 
-## 2. Preparing Transformer Inputs
+## 2. Prepare transformer inputs
 
 2.1 Teacher‑Forcing Setup:  
   - Extract ground-truth token indices from VQVAE output (via `f_to_idxBl_or_fhat`).  
@@ -34,22 +34,22 @@
 
 2.5 Result: A concatenated token sequence: [SOS tokens + teacher-forced tokens]  
 
-## 3. Causal Attention Mask Setup
+## 3. Attention mask
 
 • For training, construct an attention mask that prevents future tokens from being attended to.  
 
 • This mask ensures autoregressive (left-to-right) behavior.  
 
-## 4. Transformer Input Embedding 
+## 4. Transfomer input embedding 
 
 4.1 Input: Teacher-forcing token sequence (from Step 2).  
 
-4.2 Embedding Integration:  
+4.2 Embedding integration:  
   - Combine word embeddings, class embedding, positional, and level embeddings.  
 
 4.3 Output: A full input sequence (shape: [B, L_total, C]).  
 
-## 5. Processing Through Transformer
+## 5. Processing through transformer
 
 5.1 For each of N stacked `AdaLNSelfAttn` blocks:  
 
@@ -68,7 +68,7 @@
 
 5.2 Output: Updated token representations capturing spatial and semantic dependencies.  
 
-## 6. Output Projection & Loss Computation
+## 6. Output & Loss
 
 6.1 Final Adaptive LN: Apply `AdaLNBeforeHead` to condition output on the class embedding.  
 
@@ -77,7 +77,7 @@
 6.3 Loss Computation:  
   - Compute cross‑entropy loss (with label smoothing) between predicted logits and ground-truth token indices.  
 
-## 7. Autoregressive Generation (Inference)
+## 7. Inference
 
 7.1 Initialization:  
   - Begin with SOS token block (from class embedding).  
@@ -95,7 +95,7 @@
 7.3 Convert sampled indices into token embeddings (via VQVAE codebook lookup).  
 
 
-## 8. Multi‑Scale Progressive Generation 
+## 8. Generation at different scales 
 
 8.1 Update Latent Representation (`f_hat`):  
   - Use VQVAE’s get_next_autoregressive_input to “add” the new token embeddings into `f_hat`.  
@@ -106,7 +106,7 @@
 8.3 Prepare Next Token Map:  
   - Re-embed the updated `f_hat` (via `word_embed`) and add corresponding positional/level embeddings.  
 
-## 9. Final Image Reconstruction via VQVAE  
+## 9. Final image reconstruction via VQVAE  
 
 9.1 After processing all scales, the final latent `f_hat` represents the full-resolution token map.  
 
