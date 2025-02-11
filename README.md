@@ -1,6 +1,9 @@
 # High Level Overview
 ![Overview](https://github.com/user-attachments/assets/2dba3ebb-52d6-4fb5-be5b-a23edd53ceb6)
-    
+
+# Main Idea
+![next_scale_pred](https://github.com/user-attachments/assets/2e64d241-7e0d-4392-aca0-3f5383284008)
+
 # Steps
 
 ## 1. Image tokenization (VQVAE)
